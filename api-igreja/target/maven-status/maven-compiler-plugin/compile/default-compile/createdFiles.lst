@@ -1,0 +1,13 @@
+com/igreja/api/repository/EventoRepository.class
+com/igreja/api/controller/EventoController.class
+com/igreja/api/repository/MembroRepository.class
+com/igreja/api/controller/MembroController.class
+com/igreja/api/ApiIgrejaApplication.class
+com/igreja/api/model/Membro.class
+com/igreja/api/model/Usuario.class
+com/igreja/api/controller/dto/DashboardStatsDTO$DashboardStatsDTOBuilder.class
+com/igreja/api/repository/UsuarioRepository.class
+com/igreja/api/controller/AuthController.class
+com/igreja/api/controller/dto/DashboardStatsDTO.class
+com/igreja/api/model/Evento.class
+com/igreja/api/controller/DashboardController.class

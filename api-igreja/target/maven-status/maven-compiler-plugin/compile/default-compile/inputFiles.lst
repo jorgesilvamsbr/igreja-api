@@ -1,0 +1,12 @@
+/Users/rgsilva/Documents/projetos/api-igreja-python/api-igreja/src/main/java/com/igreja/api/ApiIgrejaApplication.java
+/Users/rgsilva/Documents/projetos/api-igreja-python/api-igreja/src/main/java/com/igreja/api/controller/AuthController.java
+/Users/rgsilva/Documents/projetos/api-igreja-python/api-igreja/src/main/java/com/igreja/api/controller/DashboardController.java
+/Users/rgsilva/Documents/projetos/api-igreja-python/api-igreja/src/main/java/com/igreja/api/controller/EventoController.java
+/Users/rgsilva/Documents/projetos/api-igreja-python/api-igreja/src/main/java/com/igreja/api/controller/MembroController.java
+/Users/rgsilva/Documents/projetos/api-igreja-python/api-igreja/src/main/java/com/igreja/api/controller/dto/DashboardStatsDTO.java
+/Users/rgsilva/Documents/projetos/api-igreja-python/api-igreja/src/main/java/com/igreja/api/model/Evento.java
+/Users/rgsilva/Documents/projetos/api-igreja-python/api-igreja/src/main/java/com/igreja/api/model/Membro.java
+/Users/rgsilva/Documents/projetos/api-igreja-python/api-igreja/src/main/java/com/igreja/api/model/Usuario.java
+/Users/rgsilva/Documents/projetos/api-igreja-python/api-igreja/src/main/java/com/igreja/api/repository/EventoRepository.java
+/Users/rgsilva/Documents/projetos/api-igreja-python/api-igreja/src/main/java/com/igreja/api/repository/MembroRepository.java
+/Users/rgsilva/Documents/projetos/api-igreja-python/api-igreja/src/main/java/com/igreja/api/repository/UsuarioRepository.java
