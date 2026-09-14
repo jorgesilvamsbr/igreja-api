@@ -1,3 +1,8 @@
+ALTER TABLE membros
+    ADD COLUMN data_casamento DATE,
+    ADD COLUMN forma_entrada VARCHAR(50),
+    ADD COLUMN data_entrada DATE;
+
 INSERT INTO membros (nome, data_nascimento, telefone, data_casamento, forma_entrada, data_entrada) VALUES
 ('Adelaide Hipólito dos Santos', NULL, '98211-6880', '1997-05-17', NULL, NULL),
 ('Adenil Oliveira da Silva', '1971-07-31', '98129-3166', NULL, NULL, NULL),
