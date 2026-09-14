@@ -1,9 +1,8 @@
 package com.api.igreja.service;
 
-import com.api.igreja.model.Evento;
-import com.api.igreja.model.Membro;
-import com.api.igreja.repository.EventoRepository;
-import com.api.igreja.repository.MembroRepository;
+import com.igreja.api.model.*;
+import com.igreja.api.repository.EventoRepository;
+import com.igreja.api.repository.MembroRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Value;
