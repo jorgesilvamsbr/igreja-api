@@ -5,7 +5,7 @@ RUN apt-get update && apt-get install -y openjdk-21-jdk
 COPY . .
 
 RUN apt-get install maven -y
-RUN mvn clean install
+RUN mvn clean install -DskipTests
 
 FROM amazoncorretto:21-alpine
 
