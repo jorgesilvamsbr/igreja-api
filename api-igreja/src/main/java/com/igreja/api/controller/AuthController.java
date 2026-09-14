@@ -22,7 +22,7 @@ public class AuthController {
         String email = credenciais.get("email");
         String senha = credenciais.get("senha");
 
-        Usuario usuario = usuarioRepository.findByEmail(email).orElseGet(null);
+        Usuario usuario = usuarioRepository.findByEmail(email).orElse(null);
 
         if (usuario == null || !usuario.getSenhaHash().equals(senha)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("E-mail ou senha incorretos");
