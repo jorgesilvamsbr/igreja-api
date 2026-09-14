@@ -22,4 +22,7 @@ public class Membro {
     private String funcao;
     private String telefone;
     private String status;
+    private LocalDate dataCasamento;
+    private String formaEntrada;
+    private LocalDate dataEntrada;
 }
