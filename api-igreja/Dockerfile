@@ -4,6 +4,7 @@ LABEL authors="rgsilva"
 RUN apt-get update && apt-get install -y openjdk-21-jdk
 COPY . .
 
+RUN mvn clean package -X
 RUN apt-get install maven -y
 RUN mvn clean install -DskipTests
 
