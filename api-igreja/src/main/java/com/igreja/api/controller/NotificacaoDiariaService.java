@@ -1,4 +1,4 @@
-package com.api.igreja.service;
+package com.igreja.api.controller;
 
 import com.igreja.api.model.*;
 import com.igreja.api.repository.EventoRepository;
