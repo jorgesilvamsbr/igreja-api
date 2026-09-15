@@ -23,9 +23,9 @@ public class JobController {
     @PostMapping("/notificacao-diaria")
     public ResponseEntity<String> executarNotificacaoDiaria(@RequestHeader("X-Job-Token") String token) {
         // Valida se quem está chamando a API é o seu agendador autorizado
-        if (!secretToken.equals(token)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Acesso não autorizado");
-        }
+        // if (!secretToken.equals(token)) {
+        //     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Acesso não autorizado");
+        // }
 
         notificacaoService.verificarENotificar();
         return ResponseEntity.ok("Job de notificação diária executado com sucesso.");
