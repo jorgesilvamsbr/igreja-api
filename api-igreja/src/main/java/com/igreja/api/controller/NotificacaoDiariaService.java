@@ -112,7 +112,7 @@ public class NotificacaoDiariaService {
 
 public void enviarEmailViaHttp(String para, String assunto, String corpo) {
     String url = "https://api.resend.com/emails";
-    String apiKey = System.getenv("RESEND_API_KEY");
+    String apiKey = System.getenv("re_9NTswNo4_52Hoy2sZhrm9DJKkMTpqbwm5");
 
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
