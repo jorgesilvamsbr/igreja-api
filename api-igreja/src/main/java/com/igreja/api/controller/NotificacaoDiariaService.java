@@ -37,13 +37,13 @@ public class NotificacaoDiariaService {
         this.mailSender = mailSender;
     }
 
-    // Roda todos os dias às 07:00 da manhã
-    @Scheduled(cron = "0 0 20 * * *")
+    // Executa todos os dias às 07:00 da manhã
+    @Scheduled(cron = "0 0 7 * * *")
     public void verificarENotificar() {
         LocalDate hoje = LocalDate.now();
         LocalDate amanha = hoje.plusDays(1);
 
-        // 1. Buscar Aniversariantes do Dia
+        // 1. Filtrar Aniversariantes do Dia
         List<Membro> aniversariantesHoje = membroRepository.findAll().stream()
                 .filter(m -> m.getDataNascimento() != null &&
                         m.getDataNascimento().getMonth() == hoje.getMonth() &&
@@ -54,64 +54,73 @@ public class NotificacaoDiariaService {
         List<Evento> eventosHoje = eventoRepository.findByDataEvento(hoje);
         List<Evento> eventosAmanha = eventoRepository.findByDataEvento(amanha);
 
-        // Se não houver aniversariantes e nem eventos, cancela o envio
+        // Regra: Se não houver aniversariantes E nem eventos, não envia o e-mail
         if (aniversariantesHoje.isEmpty() && eventosHoje.isEmpty() && eventosAmanha.isEmpty()) {
-            System.out.println("[JOB] Nenhum aniversariante ou evento registrado para hoje/amanhã. E-mail não enviado.");
+            System.out.println("[JOB] Sem aniversariantes ou eventos hoje/amanhã. E-mail não enviado.");
             return;
         }
 
-        // 3. Montar Corpo do E-mail em HTML
-        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM");
-        StringBuilder html = new StringBuilder("<h2>📋 Relatório Diário - SGM</h2>");
+        // 3. Montagem do Corpo do E-mail (Texto formatado em HTML diretamente no e-mail)
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        StringBuilder html = new StringBuilder();
+        
+        html.append("<div style='font-family: Arial, sans-serif; color: #333;'>");
+        html.append("<h2 style='color: #2563eb;'>⛪ Relatório Diário - SGM</h2>");
 
+        // Seção de Aniversariantes com Nome e Telefone em destaque
         if (!aniversariantesHoje.isEmpty()) {
-            html.append("<h3>🎉 Aniversariantes de Hoje (").append(hoje.format(fmt)).append(")</h3><ul>");
+            html.append("<h3 style='color: #d97706;'>🎉 Aniversariantes de Hoje (").append(hoje.format(fmt)).append(")</h3>");
+            html.append("<ul style='line-height: 1.6;'>");
             for (Membro m : aniversariantesHoje) {
-                html.append("<li><b>").append(m.getNome()).append("</b> - ")
-                    .append(m.getTelefone() != null ? m.getTelefone() : "Sem telefone").append("</li>");
+                String fone = (m.getTelefone() != null && !m.getTelefone().isBlank()) ? m.getTelefone() : "Telefone não cadastrado";
+                html.append("<li>👤 <b>").append(m.getNome()).append("</b> - 📞 Contato: <b>").append(fone).append("</b></li>");
             }
             html.append("</ul>");
         }
 
+        // Seção de Eventos de Hoje
         if (!eventosHoje.isEmpty()) {
-            html.append("<h3>📅 Eventos de Hoje (").append(hoje.format(fmt)).append(")</h3><ul>");
+            html.append("<h3 style='color: #059669;'>📅 Eventos de Hoje (").append(hoje.format(fmt)).append(")</h3>");
+            html.append("<ul style='line-height: 1.6;'>");
             for (Evento e : eventosHoje) {
-                html.append("<li><b>").append(e.getTitulo()).append("</b> (")
-                    .append(e.getHorario() != null ? e.getHorario() : "Sem horário").append(") - ")
-                    .append(e.getDescricao() != null ? e.getDescricao() : "").append("</li>");
+                String hora = e.getHorario() != null ? e.getHorario().toString() : "Horário não informado";
+                String desc = e.getDescricao() != null ? " - " + e.getDescricao() : "";
+                html.append("<li><b>").append(e.getTitulo()).append("</b> às <b>").append(hora).append("</b>").append(desc).append("</li>");
             }
             html.append("</ul>");
         }
 
+        // Seção de Eventos de Amanhã
         if (!eventosAmanha.isEmpty()) {
-            html.append("<h3>📌 Eventos de Amanhã (").append(amanha.format(fmt)).append(")</h3><ul>");
+            html.append("<h3 style='color: #4f46e5;'>📌 Eventos de Amanhã (").append(amanha.format(fmt)).append(")</h3>");
+            html.append("<ul style='line-height: 1.6;'>");
             for (Evento e : eventosAmanha) {
-                html.append("<li><b>").append(e.getTitulo()).append("</b> (")
-                    .append(e.getHorario() != null ? e.getHorario() : "Sem horário").append(") - ")
-                    .append(e.getDescricao() != null ? e.getDescricao() : "").append("</li>");
+                String hora = e.getHorario() != null ? e.getHorario().toString() : "Horário não informado";
+                String desc = e.getDescricao() != null ? " - " + e.getDescricao() : "";
+                html.append("<li><b>").append(e.getTitulo()).append("</b> às <b>").append(hora).append("</b>").append(desc).append("</li>");
             }
             html.append("</ul>");
         }
 
-        // 4. Disparar E-mail
-        enviarEmail(
-            "⛪ Agenda & Aniversários - " + hoje.format(fmt), 
-            html.toString()
-        );
+        html.append("</div>");
+
+        // 4. Disparo do e-mail
+        enviarEmail("⛪ Notificação Diária - " + hoje.format(fmt), html.toString());
     }
 
     private void enviarEmail(String assunto, String conteudoHtml) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            // Segundo parâmetro "false" garante que NENHUM anexo será incluído
+            MimeMessageHelper helper = new MimeMessageHelper(message, false, "UTF-8");
 
             helper.setFrom(remetente);
             helper.setTo(destinatario);
             helper.setSubject(assunto);
-            helper.setText(conteudoHtml, true);
+            helper.setText(conteudoHtml, true); // Renderiza como página/texto HTML no corpo do e-mail
 
             mailSender.send(message);
-            System.out.println("[JOB] E-mail de notificação enviado com sucesso!");
+            System.out.println("[JOB] E-mail enviado com sucesso diretamente no corpo da mensagem.");
         } catch (MessagingException e) {
             System.err.println("[JOB] Erro ao enviar e-mail: " + e.getMessage());
         }
