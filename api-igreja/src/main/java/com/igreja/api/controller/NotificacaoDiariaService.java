@@ -49,11 +49,7 @@ public class NotificacaoDiariaService {
         LocalDate amanha = hoje.plusDays(1);
 
         // 1. Filtrar Aniversariantes do Dia
-        List<Membro> aniversariantesHoje = membroRepository.findAll().stream()
-                .filter(m -> m.getDataNascimento() != null &&
-                        m.getDataNascimento().getMonth() == hoje.getMonth() &&
-                        m.getDataNascimento().getDayOfMonth() == hoje.getDayOfMonth())
-                .collect(Collectors.toList());
+        List<Membro> aniversariantesHoje = membroRepository.findByDataNascimento(hoje);
 
         // 2. Buscar Eventos de Hoje e de Amanhã
         List<Evento> eventosHoje = eventoRepository.findByDataEvento(hoje);
