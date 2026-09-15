@@ -1,12 +1,14 @@
 FROM ubuntu:latest AS build
 LABEL authors="rgsilva"
 
-RUN apt-get update && apt-get install -y openjdk-21-jdk
+# 1. Instalar o JDK e o Maven na mesma camada
+RUN apt-get update && apt-get install -y openjdk-21-jdk maven
+
+# 2. Copiar os arquivos do projeto
 COPY . .
 
-RUN mvn clean package -X
-RUN apt-get install maven -y
-RUN mvn clean install -DskipTests
+# 3. Executar o build
+RUN mvn clean package -DskipTests
 
 FROM amazoncorretto:21-alpine
 
