@@ -33,6 +33,9 @@ public class NotificacaoDiariaService {
 
     @Value("${notificacao.email.destinatario}")
     private String destinatario;
+    
+    @Value("${notificacao.email.resend.key}")
+    private String apiKey;
 
     public NotificacaoDiariaService(MembroRepository membroRepository, 
                                     EventoRepository eventoRepository, 
@@ -114,7 +117,7 @@ public class NotificacaoDiariaService {
     }
 
     public void enviarEmailViaHttp(String para, String assunto, String corpo) {
-        Resend resend = new Resend("re_9NTswNo4_52Hoy2sZhrm9DJKkMTpqbwm5");
+        Resend resend = new Resend(apiKey);
 
         CreateEmailOptions params = CreateEmailOptions.builder()
                 .from("Acme <onboarding@resend.dev>")
