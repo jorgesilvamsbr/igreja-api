@@ -10,6 +10,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.http.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -105,24 +107,33 @@ public class NotificacaoDiariaService {
         html.append("</div>");
 
         // 4. Disparo do e-mail
-        enviarEmail("⛪ Notificação Diária - " + hoje.format(fmt), html.toString());
+        enviarEmailViaHttp(destinatario, "⛪ Notificação Diária - " + hoje.format(fmt), html.toString());
     }
 
-    private void enviarEmail(String assunto, String conteudoHtml) {
-        try {
-            MimeMessage message = mailSender.createMimeMessage();
-            // Segundo parâmetro "false" garante que NENHUM anexo será incluído
-            MimeMessageHelper helper = new MimeMessageHelper(message, false, "UTF-8");
+public void enviarEmailViaHttp(String para, String assunto, String corpo) {
+    String url = "https://api.resend.com/emails";
+    String apiKey = System.getenv("RESEND_API_KEY");
 
-            helper.setFrom(remetente);
-            helper.setTo(destinatario);
-            helper.setSubject(assunto);
-            helper.setText(conteudoHtml, true); // Renderiza como página/texto HTML no corpo do e-mail
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    headers.setBearerAuth(apiKey);
 
-            mailSender.send(message);
-            System.out.println("[JOB] E-mail enviado com sucesso diretamente no corpo da mensagem.");
-        } catch (MessagingException e) {
-            System.err.println("[JOB] Erro ao enviar e-mail: " + e.getMessage());
+    String body = """
+        {
+          "from": "sib@sib.dev",
+          "to": ["%s"],
+          "subject": "%s",
+          "html": "<p>%s</p>"
         }
+        """.formatted(para, assunto, corpo);
+
+    HttpEntity<String> request = new HttpEntity<>(body, headers);
+    RestTemplate restTemplate = new RestTemplate();
+
+    try {
+        restTemplate.postForEntity(url, request, String.class);
+    } catch (Exception e) {
+        System.err.println("Erro ao enviar e-mail via API HTTP: " + e.getMessage());
     }
+}
 }
