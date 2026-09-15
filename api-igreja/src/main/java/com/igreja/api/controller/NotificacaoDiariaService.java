@@ -12,7 +12,10 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.*;
-
+import com.resend.*;
+import com.resend.core.exception.ResendException;
+import com.resend.services.emails.model.CreateEmailOptions;
+import com.resend.services.emails.model.CreateEmailResponse;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -110,30 +113,21 @@ public class NotificacaoDiariaService {
         enviarEmailViaHttp(destinatario, "⛪ Notificação Diária - " + hoje.format(fmt), html.toString());
     }
 
-public void enviarEmailViaHttp(String para, String assunto, String corpo) {
-    String url = "https://api.resend.com/emails";
-    String apiKey = System.getenv("re_9NTswNo4_52Hoy2sZhrm9DJKkMTpqbwm5");
+    public void enviarEmailViaHttp(String para, String assunto, String corpo) {
+        Resend resend = new Resend("re_9NTswNo4_52Hoy2sZhrm9DJKkMTpqbwm5");
 
-    HttpHeaders headers = new HttpHeaders();
-    headers.setContentType(MediaType.APPLICATION_JSON);
-    headers.setBearerAuth(apiKey);
+        CreateEmailOptions params = CreateEmailOptions.builder()
+                .from("Acme <onboarding@resend.dev>")
+                .to(para)
+                .subject(assunto)
+                .html(corpo)
+                .build();
 
-    String body = """
-        {
-          "from": "sib@sib.dev",
-          "to": ["%s"],
-          "subject": "%s",
-          "html": "<p>%s</p>"
+         try {
+            CreateEmailResponse data = resend.emails().send(params);
+            System.out.println(data.getId());
+        } catch (ResendException e) {
+            e.printStackTrace();
         }
-        """.formatted(para, assunto, corpo);
-
-    HttpEntity<String> request = new HttpEntity<>(body, headers);
-    RestTemplate restTemplate = new RestTemplate();
-
-    try {
-        restTemplate.postForEntity(url, request, String.class);
-    } catch (Exception e) {
-        System.err.println("Erro ao enviar e-mail via API HTTP: " + e.getMessage());
     }
-}
 }
