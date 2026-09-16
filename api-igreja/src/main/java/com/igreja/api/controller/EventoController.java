@@ -27,6 +27,20 @@ public class EventoController {
         return repository.save(evento);
     }
 
+    @PutMapping("/{id}")
+    public Evento atualizar(@PathVariable Long id, @RequestBody Evento eventoAtualizado) {
+        return repository.findById(id)
+            .map(evento -> {
+                evento.setTitulo(eventoAtualizado.getTitulo());
+                evento.setDataEvento(eventoAtualizado.getDataEvento());
+                evento.setHorario(eventoAtualizado.getHorario());
+                evento.setCategoria(eventoAtualizado.getCategoria());
+                evento.setDescricao(eventoAtualizado.getDescricao());
+                return repository.save(evento);
+            })
+            .orElseThrow(() -> new RuntimeException("Evento não encontrado com o id: " + id));
+    }
+
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deletar(@PathVariable Long id) {
