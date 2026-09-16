@@ -72,7 +72,7 @@ public class NotificacaoDiariaService {
         // Header com gradiente
         html.append("<div style='background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: #ffffff; padding: 28px 20px; text-align: center;'>");
         html.append("<div style='font-size: 28px; margin-bottom: 6px;'>⛪</div>");
-        html.append("<h1 style='margin: 0; font-size: 20px; font-weight: 700; letter-spacing: -0.5px;'>Relatório Diário — SGM</h1>");
+        html.append("<h1 style='margin: 0; font-size: 20px; font-weight: 700; letter-spacing: -0.5px;'>Relatório Diário — SIB</h1>");
         html.append("<p style='margin: 6px 0 0 0; font-size: 13px; color: #bfdbfe; font-weight: 500;'>").append(hoje.format(fmt)).append("</p>");
         html.append("</div>");
     
