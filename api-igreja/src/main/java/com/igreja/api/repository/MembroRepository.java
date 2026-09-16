@@ -9,6 +9,6 @@ import java.time.LocalDate;
 
 public interface MembroRepository extends JpaRepository<Membro, Long> {
     List<Membro> findByNomeContainingIgnoreCase(String nome);
-    @Query("SELECT m FROM Membro m WHERE MONTH(m.dataNascimento) = MONTH(:data) AND DAY(m.dataNascimento) = DAY(:data)")
-    List<Membro> findByDataNascimento(@Param("data")LocalDate dataEvento);
+    @Query("SELECT m FROM Membro m WHERE EXTRACT(MONTH FROM m.dataNascimento) = EXTRACT(MONTH FROM CAST(:data AS date)) AND EXTRACT(DAY FROM m.dataNascimento) = EXTRACT(DAY FROM CAST(:data AS date))")
+    List<Membro> findByDataNascimento(@Param("data") LocalDate data);
 }
