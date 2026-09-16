@@ -45,7 +45,6 @@ public class NotificacaoDiariaService {
     }
 
     // Executa todos os dias às 07:00 da manhã
-    //@Scheduled(cron = "0 0 7 * * *")
     @Scheduled(cron = "0 0 7 * * *")
     public void verificarENotificar() {
         LocalDate hoje = LocalDate.now();
@@ -67,12 +66,12 @@ public class NotificacaoDiariaService {
         html.append("<div style='background-color: #f1f5f9; padding: 30px 10px; font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif; color: #0f172a;'>");
         
         // Card Principal
-        html.append("<div style='max-width: 560px; margin: 0 auto; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 10px 15px -3px rgba(0,0,0,0.03); border: 1px solid #e2e8f0;'>");
+        html.append("<div style='max-width: 560px; margin: 0 auto; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;'>");
     
-        // Header com gradiente
+        // Header
         html.append("<div style='background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: #ffffff; padding: 28px 20px; text-align: center;'>");
         html.append("<div style='font-size: 28px; margin-bottom: 6px;'>⛪</div>");
-        html.append("<h1 style='margin: 0; font-size: 20px; font-weight: 700; letter-spacing: -0.5px;'>Relatório Diário — SIB</h1>");
+        html.append("<h1 style='margin: 0; font-size: 20px; font-weight: 700; letter-spacing: -0.5px;'>Relatório Diário — SGM</h1>");
         html.append("<p style='margin: 6px 0 0 0; font-size: 13px; color: #bfdbfe; font-weight: 500;'>").append(hoje.format(fmt)).append("</p>");
         html.append("</div>");
     
@@ -82,24 +81,28 @@ public class NotificacaoDiariaService {
         // 1. Aniversariantes de Hoje
         if (!aniversariantesHoje.isEmpty()) {
             html.append("<div style='margin-bottom: 24px;'>");
-            html.append("<div style='display: flex; align-items: center; margin-bottom: 12px; border-bottom: 2px solid #fef3c7; padding-bottom: 6px;'>");
-            html.append("<span style='font-size: 16px; margin-right: 6px;'>🎉</span>");
-            html.append("<h2 style='color: #b45309; margin: 0; font-size: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;'>Aniversariantes de Hoje</h2>");
+            html.append("<div style='border-bottom: 2px solid #fef3c7; padding-bottom: 6px; margin-bottom: 12px;'>");
+            html.append("<h2 style='color: #b45309; margin: 0; font-size: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;'>🎉 Aniversariantes de Hoje</h2>");
             html.append("</div>");
     
             for (Membro m : aniversariantesHoje) {
                 String linkWa = gerarLinkWhatsapp(m.getTelefone(), m.getNome());
+                String telefoneExibicao = (m.getTelefone() != null && !m.getTelefone().isBlank()) ? m.getTelefone() : "Não informado";
                 
                 html.append("<div style='background-color: #fffbeb; border: 1px solid #fde68a; border-radius: 12px; padding: 14px 16px; margin-bottom: 10px;'>");
                 html.append("<table width='100%' border='0' cellspacing='0' cellpadding='0'><tr>");
-                html.append("<td style='font-weight: 600; font-size: 15px; color: #78350f;'>").append(m.getNome()).append("</td>");
                 
+                // Coluna Esquerda: Nome e Telefone Exposto
+                html.append("<td>");
+                html.append("<div style='font-weight: 600; font-size: 15px; color: #78350f;'>👤 ").append(m.getNome()).append("</div>");
+                html.append("<div style='font-size: 13px; color: #b45309; margin-top: 4px;'>📞 <b>Contato:</b> ").append(telefoneExibicao).append("</div>");
+                html.append("</td>");
+                
+                // Coluna Direita: Botão de Ação
                 if (linkWa != null) {
-                    html.append("<td align='right'>");
-                    html.append("<a href='").append(linkWa).append("' target='_blank' style='display: inline-block; background-color: #25d366; color: #ffffff; text-decoration: none; padding: 7px 14px; border-radius: 20px; font-weight: 600; font-size: 12px; box-shadow: 0 2px 4px rgba(37,211,102,0.2);'>💬 WhatsApp</a>");
+                    html.append("<td align='right' style='vertical-align: middle;'>");
+                    html.append("<a href='").append(linkWa).append("' target='_blank' style='display: inline-block; background-color: #25d366; color: #ffffff; text-decoration: none; padding: 8px 14px; border-radius: 20px; font-weight: 600; font-size: 12px;'>💬 WhatsApp</a>");
                     html.append("</td>");
-                } else {
-                    html.append("<td align='right' style='font-size: 12px; color: #a16207;'>Sem telefone</td>");
                 }
                 
                 html.append("</tr></table>");
@@ -111,9 +114,8 @@ public class NotificacaoDiariaService {
         // 2. Eventos de Hoje
         if (!eventosHoje.isEmpty()) {
             html.append("<div style='margin-bottom: 24px;'>");
-            html.append("<div style='display: flex; align-items: center; margin-bottom: 12px; border-bottom: 2px solid #d1fae5; padding-bottom: 6px;'>");
-            html.append("<span style='font-size: 16px; margin-right: 6px;'>📅</span>");
-            html.append("<h2 style='color: #047857; margin: 0; font-size: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;'>Eventos de Hoje</h2>");
+            html.append("<div style='border-bottom: 2px solid #d1fae5; padding-bottom: 6px; margin-bottom: 12px;'>");
+            html.append("<h2 style='color: #047857; margin: 0; font-size: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;'>📅 Eventos de Hoje</h2>");
             html.append("</div>");
     
             for (Evento e : eventosHoje) {
@@ -133,14 +135,13 @@ public class NotificacaoDiariaService {
         // 3. Eventos de Amanhã
         if (!eventosAmanha.isEmpty()) {
             html.append("<div>");
-            html.append("<div style='display: flex; align-items: center; margin-bottom: 12px; border-bottom: 2px solid #e0e7ff; padding-bottom: 6px;'>");
-            html.append("<span style='font-size: 16px; margin-right: 6px;'>📌</span>");
-            html.append("<h2 style='color: #4338ca; margin: 0; font-size: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;'>Eventos de Amanhã (").append(amanha.format(fmt)).append(")</h2>");
+            html.append("<div style='border-bottom: 2px solid #e0e7ff; padding-bottom: 6px; margin-bottom: 12px;'>");
+            html.append("<h2 style='color: #4338ca; margin: 0; font-size: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;'>📌 Eventos de Amanhã (").append(amanha.format(fmt)).append(")</h2>");
             html.append("</div>");
     
             for (Evento e : eventosAmanha) {
                 String hora = e.getHorario() != null ? e.getHorario().toString() : "--:--";
-                html.append("<div style='background-color: #eeefbe; border: 1px solid #c7d2fe; border-left: 4px solid #6366f1; padding: 12px 16px; margin-bottom: 10px; border-radius: 8px;'>");
+                html.append("<div style='background-color: #eef2ff; border: 1px solid #c7d2fe; border-left: 4px solid #6366f1; padding: 12px 16px; margin-bottom: 10px; border-radius: 8px;'>");
                 html.append("<div style='font-weight: 600; color: #3730a3; font-size: 15px;'>").append(e.getTitulo()).append("</div>");
                 html.append("<div style='margin-top: 6px; font-size: 13px; color: #4338ca;'>");
                 html.append("<span style='background-color: #e0e7ff; color: #3730a3; padding: 2px 8px; border-radius: 4px; font-weight: 700; margin-right: 6px;'>⏰ ").append(hora).append("</span>");
@@ -165,28 +166,34 @@ public class NotificacaoDiariaService {
     }
     
     /**
-     * Trata o número e constrói a URL com mensagem pré-formatada para o WhatsApp
+     * Gera URL compatível com dispositivos móveis (iOS / Android) usando api.whatsapp.com
      */
     private String gerarLinkWhatsapp(String telefone, String nome) {
         if (telefone == null || telefone.isBlank()) return null;
     
-        // Remove caracteres especiais (espaços, traços, parênteses)
+        // Remove qualquer caractere que não seja número
         String apenasNumeros = telefone.replaceAll("[^0-9]", "");
         if (apenasNumeros.isEmpty()) return null;
     
-        // Adiciona o DDI do Brasil (55) se a string contiver apenas o DDD + Número (10 ou 11 dígitos)
+        // Adiciona o DDI 55 (Brasil) caso o número contenha apenas DDD + Telefone (10 ou 11 dígitos)
         if (apenasNumeros.length() == 10 || apenasNumeros.length() == 11) {
             apenasNumeros = "55" + apenasNumeros;
         }
     
-        String mensagem = "Olá " + nome + ", parabéns pelo seu aniversário! Que Deus abençoe grandemente o seu dia! 🎉👏";
-        return "https://wa.me/" + apenasNumeros + "?text=" + java.net.URLEncoder.encode(mensagem, java.nio.charset.StandardCharsets.UTF_8);
+        // Pega apenas o primeiro nome para deixar o cumprimento mais pessoal
+        String primeiroNome = (nome != null && !nome.isBlank()) ? nome.trim().split(" ")[0] : "";
+    
+        // Mensagem padrão pessoal e cristã
+        String mensagem = "Graça e Paz, " + primeiroNome + "! ✝️🎉 Passando para te desejar um feliz aniversário! "
+                + "Que o Senhor abençoe ricamente a sua vida, renove as suas forças e te encha de paz, saúde e alegria neste novo ciclo. Um grande abraço!";
+        
+        // api.whatsapp.com é nativamente suportado pelos navegadores móbiles para redirecionamento direto
+        return "https://api.whatsapp.com/send?phone=" + apenasNumeros + "&text=" + URLEncoder.encode(mensagem, StandardCharsets.UTF_8);
     }
 
     public void enviarEmailViaHttp(String para, String assunto, String corpo) {
         String apiKey = System.getenv("RESEND_KEY_API");
         Resend resend = new Resend(apiKey);
-
         CreateEmailOptions params = CreateEmailOptions.builder()
                 .from("Info SIB <sib@resend.dev>")
                 .to(para)
