@@ -17,7 +17,6 @@ public class PequenoGrupo {
     @Column(nullable = false)
     private String nome;
     @ManyToOne
-    @Column(nullable = false)
     @JoinColumn(name = "lider_id")
     private Membro lider;
     @ManyToMany
