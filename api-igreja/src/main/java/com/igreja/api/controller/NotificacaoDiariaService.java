@@ -3,8 +3,6 @@ package com.igreja.api.controller;
 import com.igreja.api.model.*;
 import com.igreja.api.repository.EventoRepository;
 import com.igreja.api.repository.MembroRepository;
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -26,17 +24,14 @@ public class NotificacaoDiariaService {
 
     private final MembroRepository membroRepository;
     private final EventoRepository eventoRepository;
-    private final JavaMailSender mailSender;
 
     @Value("${notificacao.email.destinatario}")
     private String destinatario;
 
     public NotificacaoDiariaService(MembroRepository membroRepository, 
-                                    EventoRepository eventoRepository, 
-                                    JavaMailSender mailSender) {
+                                    EventoRepository eventoRepository) {
         this.membroRepository = membroRepository;
         this.eventoRepository = eventoRepository;
-        this.mailSender = mailSender;
     }
 
     // Executa todos os dias às 07:00 da manhã
