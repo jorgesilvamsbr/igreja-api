@@ -46,6 +46,7 @@ public class NotificacaoDiariaService {
 
     // Executa todos os dias às 07:00 da manhã
     //@Scheduled(cron = "0 0 7 * * *")
+    @Scheduled(cron = "0 0 7 * * *")
     public void verificarENotificar() {
         LocalDate hoje = LocalDate.now();
         LocalDate amanha = hoje.plusDays(1);
@@ -62,79 +63,105 @@ public class NotificacaoDiariaService {
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         StringBuilder html = new StringBuilder();
     
-        // Container Principal do E-mail
-        html.append("<div style='max-width: 600px; margin: 0 auto; font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif; color: #1e293b; background-color: #f8fafc; padding: 20px;'>");
+        // Container Wrapper
+        html.append("<div style='background-color: #f1f5f9; padding: 30px 10px; font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif; color: #0f172a;'>");
         
-        // Cabeçalho
-        html.append("<div style='background-color: #2563eb; color: #ffffff; padding: 20px; border-radius: 12px 12px 0 0; text-align: center;'>");
-        html.append("<h2 style='margin: 0; font-size: 20px; font-weight: 700;'>⛪ Relatório Diário - SGM</h2>");
-        html.append("<p style='margin: 4px 0 0 0; font-size: 14px; opacity: 0.9;'>").append(hoje.format(fmt)).append("</p>");
+        // Card Principal
+        html.append("<div style='max-width: 560px; margin: 0 auto; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 10px 15px -3px rgba(0,0,0,0.03); border: 1px solid #e2e8f0;'>");
+    
+        // Header com gradiente
+        html.append("<div style='background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: #ffffff; padding: 28px 20px; text-align: center;'>");
+        html.append("<div style='font-size: 28px; margin-bottom: 6px;'>⛪</div>");
+        html.append("<h1 style='margin: 0; font-size: 20px; font-weight: 700; letter-spacing: -0.5px;'>Relatório Diário — SGM</h1>");
+        html.append("<p style='margin: 6px 0 0 0; font-size: 13px; color: #bfdbfe; font-weight: 500;'>").append(hoje.format(fmt)).append("</p>");
         html.append("</div>");
     
-        html.append("<div style='background-color: #ffffff; padding: 24px; border-radius: 0 0 12px 12px; border: 1px solid #e2e8f0; border-top: none;'>");
+        // Corpo
+        html.append("<div style='padding: 24px;'>");
     
-        // 1. Seção de Aniversariantes
+        // 1. Aniversariantes de Hoje
         if (!aniversariantesHoje.isEmpty()) {
             html.append("<div style='margin-bottom: 24px;'>");
-            html.append("<h3 style='color: #d97706; margin: 0 0 12px 0; font-size: 16px; border-bottom: 2px solid #fef3c7; padding-bottom: 6px;'>🎉 Aniversariantes de Hoje</h3>");
-            
+            html.append("<div style='display: flex; align-items: center; margin-bottom: 12px; border-bottom: 2px solid #fef3c7; padding-bottom: 6px;'>");
+            html.append("<span style='font-size: 16px; margin-right: 6px;'>🎉</span>");
+            html.append("<h2 style='color: #b45309; margin: 0; font-size: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;'>Aniversariantes de Hoje</h2>");
+            html.append("</div>");
+    
             for (Membro m : aniversariantesHoje) {
                 String linkWa = gerarLinkWhatsapp(m.getTelefone(), m.getNome());
                 
-                html.append("<div style='background-color: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 12px 16px; margin-bottom: 10px;'>");
-                html.append("<div style='font-weight: 600; font-size: 15px; color: #78350f;'>👤 ").append(m.getNome()).append("</div>");
+                html.append("<div style='background-color: #fffbeb; border: 1px solid #fde68a; border-radius: 12px; padding: 14px 16px; margin-bottom: 10px;'>");
+                html.append("<table width='100%' border='0' cellspacing='0' cellpadding='0'><tr>");
+                html.append("<td style='font-weight: 600; font-size: 15px; color: #78350f;'>").append(m.getNome()).append("</td>");
                 
                 if (linkWa != null) {
-                    html.append("<div style='margin-top: 8px;'>");
-                    html.append("<a href='").append(linkWa).append("' target='_blank' style='display: inline-block; background-color: #25d366; color: #ffffff; text-decoration: none; padding: 8px 14px; border-radius: 6px; font-weight: 600; font-size: 13px;'>💬 Chamar no WhatsApp (").append(m.getTelefone()).append(")</a>");
-                    html.append("</div>");
+                    html.append("<td align='right'>");
+                    html.append("<a href='").append(linkWa).append("' target='_blank' style='display: inline-block; background-color: #25d366; color: #ffffff; text-decoration: none; padding: 7px 14px; border-radius: 20px; font-weight: 600; font-size: 12px; box-shadow: 0 2px 4px rgba(37,211,102,0.2);'>💬 WhatsApp</a>");
+                    html.append("</td>");
                 } else {
-                    html.append("<div style='font-size: 13px; color: #b45309; margin-top: 4px;'>📞 Telefone não cadastrado</div>");
+                    html.append("<td align='right' style='font-size: 12px; color: #a16207;'>Sem telefone</td>");
                 }
+                
+                html.append("</tr></table>");
                 html.append("</div>");
             }
             html.append("</div>");
         }
     
-        // 2. Seção de Eventos de Hoje
+        // 2. Eventos de Hoje
         if (!eventosHoje.isEmpty()) {
             html.append("<div style='margin-bottom: 24px;'>");
-            html.append("<h3 style='color: #059669; margin: 0 0 12px 0; font-size: 16px; border-bottom: 2px solid #d1fae5; padding-bottom: 6px;'>📅 Eventos de Hoje</h3>");
-            
+            html.append("<div style='display: flex; align-items: center; margin-bottom: 12px; border-bottom: 2px solid #d1fae5; padding-bottom: 6px;'>");
+            html.append("<span style='font-size: 16px; margin-right: 6px;'>📅</span>");
+            html.append("<h2 style='color: #047857; margin: 0; font-size: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;'>Eventos de Hoje</h2>");
+            html.append("</div>");
+    
             for (Evento e : eventosHoje) {
-                String hora = e.getHorario() != null ? e.getHorario().toString() : "Horário não informado";
-                html.append("<div style='background-color: #ecfdf5; border-left: 4px solid #10b981; padding: 10px 14px; margin-bottom: 8px; border-radius: 0 6px 6px 0;'>");
-                html.append("<div style='font-weight: 600; color: #065f46;'>").append(e.getTitulo()).append("</div>");
-                html.append("<div style='font-size: 13px; color: #047857; margin-top: 2px;'>⏰ <b>").append(hora).append("</b>");
+                String hora = e.getHorario() != null ? e.getHorario().toString() : "--:--";
+                html.append("<div style='background-color: #f0fdf4; border: 1px solid #bbf7d0; border-left: 4px solid #10b981; padding: 12px 16px; margin-bottom: 10px; border-radius: 8px;'>");
+                html.append("<div style='font-weight: 600; color: #065f46; font-size: 15px;'>").append(e.getTitulo()).append("</div>");
+                html.append("<div style='margin-top: 6px; font-size: 13px; color: #047857;'>");
+                html.append("<span style='background-color: #dcfce7; color: #15803d; padding: 2px 8px; border-radius: 4px; font-weight: 700; margin-right: 6px;'>⏰ ").append(hora).append("</span>");
                 if (e.getDescricao() != null && !e.getDescricao().isBlank()) {
-                    html.append(" — ").append(e.getDescricao());
+                    html.append("<span>").append(e.getDescricao()).append("</span>");
                 }
                 html.append("</div></div>");
             }
             html.append("</div>");
         }
     
-        // 3. Seção de Eventos de Amanhã
+        // 3. Eventos de Amanhã
         if (!eventosAmanha.isEmpty()) {
             html.append("<div>");
-            html.append("<h3 style='color: #4f46e5; margin: 0 0 12px 0; font-size: 16px; border-bottom: 2px solid #e0e7ff; padding-bottom: 6px;'>📌 Eventos de Amanhã (").append(amanha.format(fmt)).append(")</h3>");
-            
+            html.append("<div style='display: flex; align-items: center; margin-bottom: 12px; border-bottom: 2px solid #e0e7ff; padding-bottom: 6px;'>");
+            html.append("<span style='font-size: 16px; margin-right: 6px;'>📌</span>");
+            html.append("<h2 style='color: #4338ca; margin: 0; font-size: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;'>Eventos de Amanhã (").append(amanha.format(fmt)).append(")</h2>");
+            html.append("</div>");
+    
             for (Evento e : eventosAmanha) {
-                String hora = e.getHorario() != null ? e.getHorario().toString() : "Horário não informado";
-                html.append("<div style='background-color: #eef2ff; border-left: 4px solid #6366f1; padding: 10px 14px; margin-bottom: 8px; border-radius: 0 6px 6px 0;'>");
-                html.append("<div style='font-weight: 600; color: #3730a3;'>").append(e.getTitulo()).append("</div>");
-                html.append("<div style='font-size: 13px; color: #4338ca; margin-top: 2px;'>⏰ <b>").append(hora).append("</b>");
+                String hora = e.getHorario() != null ? e.getHorario().toString() : "--:--";
+                html.append("<div style='background-color: #eeefbe; border: 1px solid #c7d2fe; border-left: 4px solid #6366f1; padding: 12px 16px; margin-bottom: 10px; border-radius: 8px;'>");
+                html.append("<div style='font-weight: 600; color: #3730a3; font-size: 15px;'>").append(e.getTitulo()).append("</div>");
+                html.append("<div style='margin-top: 6px; font-size: 13px; color: #4338ca;'>");
+                html.append("<span style='background-color: #e0e7ff; color: #3730a3; padding: 2px 8px; border-radius: 4px; font-weight: 700; margin-right: 6px;'>⏰ ").append(hora).append("</span>");
                 if (e.getDescricao() != null && !e.getDescricao().isBlank()) {
-                    html.append(" — ").append(e.getDescricao());
+                    html.append("<span>").append(e.getDescricao()).append("</span>");
                 }
                 html.append("</div></div>");
             }
             html.append("</div>");
         }
     
-        html.append("</div></div>");
+        html.append("</div>"); // fim do corpo
     
-        enviarEmailViaHttp(destinatario, "⛪ [SIB] -  Notificação Diária - " + hoje.format(fmt), html.toString());
+        // Footer
+        html.append("<div style='background-color: #f8fafc; border-top: 1px solid #f1f5f9; padding: 16px; text-align: center; font-size: 12px; color: #94a3b8;'>");
+        html.append("Sistema de Gestão de Membros • Notificação Automática");
+        html.append("</div>");
+    
+        html.append("</div></div>"); // fim do card e wrapper
+    
+        enviarEmailViaHttp(destinatario, "⛪ Notificação Diária - " + hoje.format(fmt), html.toString());
     }
     
     /**
