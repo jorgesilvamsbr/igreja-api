@@ -30,9 +30,6 @@ public class NotificacaoDiariaService {
     private final EventoRepository eventoRepository;
     private final JavaMailSender mailSender;
 
-    @Value("${spring.mail.username}")
-    private String remetente;
-
     @Value("${notificacao.email.destinatario}")
     private String destinatario;
 
