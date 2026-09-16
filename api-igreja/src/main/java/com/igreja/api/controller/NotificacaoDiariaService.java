@@ -45,7 +45,7 @@ public class NotificacaoDiariaService {
     }
 
     // Executa todos os dias às 07:00 da manhã
-    @Scheduled(cron = "0 0 7 * * *")
+    //@Scheduled(cron = "0 0 7 * * *")
     public void verificarENotificar() {
         LocalDate hoje = LocalDate.now();
         LocalDate amanha = hoje.plusDays(1);
